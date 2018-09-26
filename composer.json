@@ -1,0 +1,24 @@
+{
+    "name": "saviorlv/yii2-dingtalk-exception",
+    "description": "Yii2 DingTalk exception",
+    "keywords": [ "yii2", "dingtalk","log","php","sdk","exception"],
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://github.com/saviorlv/yii2-dingtalk-exception",
+    "authors": [
+        {
+            "name": "saviorlv",
+            "homepage": "https://saviorlv.github.io/"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0",
+        "yiisoft/yii2": "^2.0.15",
+        "saviorlv/yii2-dingtalk":"@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Saviorlv\\Log\\": "src/"
+        }
+    }
+}
