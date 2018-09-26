@@ -1,8 +1,10 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
- * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * Created by PhpStorm.
+ * User: Saviorlv
+ * Date: 2018/9/26
+ * Time: 13:39
+ * @author saviorlv <1042080686@qq.com>
  */
 
 namespace Saviorlv\Log;
@@ -84,7 +86,7 @@ class ExceptionTarget extends Target
 
         $robot = $locator->get('robot');
 
-        $response = $robot->sendMarkdownMsg('ww',$message);
+        $response = $robot->sendTextMsg($message);
 
         return json_decode($response,true);
     }
