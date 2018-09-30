@@ -1,19 +1,16 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Saviorlv
- * Date: 2018/9/26
- * Time: 13:39
- * @author saviorlv <1042080686@qq.com>
+ * @link http://www.yiiframework.com/
+ * @copyright Copyright (c) 2008 Yii Software LLC
+ * @license http://www.yiiframework.com/license/
  */
 
 namespace Saviorlv\Log;
 
-use Yii;
-use yii\base\InvalidConfigException;
-use yii\log\Logger;
 use yii\log\Target;
 use yii\di\ServiceLocator;
+use yii\log\LogRuntimeException;
+use yii\base\InvalidConfigException;
 
 /**
  * ```php
@@ -23,8 +20,10 @@ use yii\di\ServiceLocator;
  *              [
  *                  'class' => 'Saviorlv\Log\ExceptionTarget',
  *                  'levels' => ['error', 'warning'],
- *                  'message' => [
+ *                  'options' => [
  *                      'accessToken' => 'xxxxxxxxx',
+ *                      'isAtAll' => false,
+ *                      'atMobiles' => []
  *                  ],
  *              ],
  *          ],
@@ -38,15 +37,15 @@ class ExceptionTarget extends Target
     /**
      * @var array
      */
-    public $message = [];
-
+    public $options = [];
+    
     /**
      * {@inheritdoc}
      */
     public function init()
     {
         parent::init();
-        if (empty($this->message['accessToken'])) {
+        if (empty($this->options['accessToken'])) {
             throw new InvalidConfigException('The "accessToken" option must be set.');
         }
     }
@@ -54,18 +53,19 @@ class ExceptionTarget extends Target
     /**
      * Sends log messages to dingtalk.
      * Starting from version 2.0.14, this method throws LogRuntimeException in case the log can not be exported.
+     * @return mixed
+     * @throws InvalidConfigException
      * @throws LogRuntimeException
      */
     public function export()
     {
         $messages = array_map([$this, 'formatMessage'], $this->messages);
-        
-        $dingTalk = $this->sendMsg($messages);
 
-        if ($dingTalk['errmsg']!=='ok') {
+        $response = $this->sendMsg($messages);
+        if ($response['errmsg']!=='ok') {
             throw new LogRuntimeException('Unable to export log through DingTalk!');
         }else{
-            Yii::trace(json_encode($dingTalk),Logger::LEVEL_INFO);
+            return $response;
         }
     }
 
@@ -75,19 +75,15 @@ class ExceptionTarget extends Target
      * @throws InvalidConfigException
      */
     public function sendMsg($message){
-
         $locator = new ServiceLocator;
         $locator->setComponents([
             'robot' => [
                 'class' => 'Saviorlv\Dingtalk\Robot',
-                'accessToken' => $this->message['accessToken']
+                'accessToken' => $this->options['accessToken']
             ],
         ]);
-
         $robot = $locator->get('robot');
-
-        $response = $robot->sendTextMsg($message);
-
+        $response = $robot->sendTextMsg($message,$this->options['atMobiles'],$this->options['isAtAll']);
         return json_decode($response,true);
     }
 }
