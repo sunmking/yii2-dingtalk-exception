@@ -9,8 +9,14 @@
 ```bash
 composer require saviorlv/yii2-dingtalk-exception
 ```
-
 ## 配置
+
+在使用本扩展之前，你需要去 [群机器人](https://open-doc.dingtalk.com/microapp/serverapi2/nr29om) 获取相关信息。
+
+
+## 使用
+
+> 在config/main.php配置文件中定义component配置信息
 
 ```bash
 'components' => [
